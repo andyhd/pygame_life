@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import random
 
 import pygame
@@ -17,7 +15,6 @@ CELL_WIDTH, CELL_HEIGHT = 5, 5
 def get_update_world_fn(state: dict):
     cells: list[list[int]] = [[0] * COLS for _ in range(ROWS)]
 
-
     def next_generation() -> list[list[int]]:
         next_gen = []
         for y in range(ROWS):
@@ -30,27 +27,26 @@ def get_update_world_fn(state: dict):
                 prev_col = (x - 1) % COLS
                 next_col = (x + 1) % COLS
                 num_neighbours = (
-                    prev_row[prev_col] +
-                    prev_row[x] +
-                    prev_row[next_col] +
-                    curr_row[prev_col] +
-                    curr_row[next_col] +
-                    next_row[prev_col] +
-                    next_row[x] +
-                    next_row[next_col]
+                    prev_row[prev_col]
+                    + prev_row[x]
+                    + prev_row[next_col]
+                    + curr_row[prev_col]
+                    + curr_row[next_col]
+                    + next_row[prev_col]
+                    + next_row[x]
+                    + next_row[next_col]
                 )
-                row.append((alive and 2 <= num_neighbours <= 3) or (
-                    not alive and num_neighbours == 3
-                ))
+                row.append(
+                    (alive and 2 <= num_neighbours <= 3)
+                    or (not alive and num_neighbours == 3)
+                )
             next_gen.append(row)
         return next_gen
-
 
     def randomize() -> None:
         for y in range(ROWS):
             for x in range(COLS):
                 cells[y][x] = random.choice((True, False))
-
 
     def gosper_gun() -> None:
         gun = (
@@ -69,7 +65,6 @@ def get_update_world_fn(state: dict):
         for y, row in enumerate(gun):
             for x, cell in enumerate(row):
                 cells[y + 40][x + 40] = cell == "O"
-
 
     def update_world(surface: pygame.Surface, events: list[Event]) -> None:
         for event in events:
@@ -133,7 +128,7 @@ def life():
         with imgui.render(gui, surface) as render:
             render(
                 label(f"Generation: {state['generation']}"),
-                padding=(20, 20),
+                topleft=(30, 10),
             )
             if state["paused"]:
                 render(
@@ -149,8 +144,6 @@ def life():
                         "While paused, you can draw\n"
                         "with the mouse"
                     ),
-                    background="blue",
-                    padding=(20, 20),
                     center=rect.center,
                 )
 
